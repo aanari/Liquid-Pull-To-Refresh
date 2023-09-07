@@ -32,6 +32,13 @@ const Duration _kIndicatorScaleDuration = Duration(milliseconds: 200);
 /// Used by [LiquidPullToRefresh.onRefresh].
 typedef RefreshCallback = Future<void> Function();
 
+/// The signature for a function that's called when the user has dragged a
+/// [LiquidPullToRefresh] far enough to demonstrate that they intend the app to
+/// refresh.
+///
+/// Used by [LiquidPullToRefresh.onArmed].
+typedef ArmedCallback = void Function();
+
 // The state machine moves through these modes only when the scrollable
 // identified by scrollableKey has been scrolled to its min or max limit.
 enum _LiquidPullToRefreshMode {
@@ -49,6 +56,7 @@ class LiquidPullToRefresh extends StatefulWidget {
     this.animSpeedFactor = 1.0,
     required this.child,
     required this.onRefresh,
+    required this.onArmed,
     this.color,
     this.backgroundColor,
     this.height,
@@ -98,6 +106,10 @@ class LiquidPullToRefresh extends StatefulWidget {
   /// far enough to demonstrate that they want the app to refresh. The returned
   /// [Future] must complete when the refresh operation is finished.
   final RefreshCallback onRefresh;
+
+  /// A function that's called when the user has dragged the progress indicator
+  /// far enough to demonstrate that they intend the app to refresh.
+  final ArmedCallback onArmed;
 
   /// The progress indicator's foreground color. The current theme's
   /// [Theme.of(context).colorScheme.secondary] by default.
@@ -455,8 +467,10 @@ class LiquidPullToRefreshState extends State<LiquidPullToRefresh>
     _positionController.value =
         newValue.clamp(0.0, 1.0); // this triggers various rebuilds
     if (_mode == _LiquidPullToRefreshMode.drag &&
-        _valueColor.value!.alpha == 0xFF)
+        _valueColor.value!.alpha == 0xFF) {
       _mode = _LiquidPullToRefreshMode.armed;
+      widget.onArmed();
+    }
   }
 
   void _show() {
