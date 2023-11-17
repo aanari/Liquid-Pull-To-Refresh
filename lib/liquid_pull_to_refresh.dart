@@ -605,8 +605,7 @@ class LiquidPullToRefreshState extends State<LiquidPullToRefresh>
               return Opacity(
                   // -0.01 is done for elasticOut curve
                   opacity: (widget.showChildOpacityTransition)
-                      ? (_childOpacityAnimation.value - (1 / 3) - 0.01)
-                          .clamp(0.0, 1.0)
+                      ? (_childOpacityAnimation.value - 0.01).clamp(0.0, 1.0)
                       : 1.0,
                   child: child);
             }
@@ -639,9 +638,11 @@ class LiquidPullToRefreshState extends State<LiquidPullToRefresh>
                     : 0.0,
               ),
               child: Container(
-                height: _value.value * height * 2, // 100.0
-                color: color,
-              ),
+                  height: _value.value * height * 2, // 100.0
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(7.5)),
+                    color: color,
+                  )),
             );
           },
         ),
